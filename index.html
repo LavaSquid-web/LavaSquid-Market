@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LavaSquid - Discover Independent Vendors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-indigo-600"> LavaSquid</h1>
+            <div class="space-x-6">
+                <a href="index.html" class="text-indigo-600 font-semibold">Storefront</a>
+                <a href="vendor.html" class="text-gray-600 hover:text-indigo-600 font-medium">Vendor Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="bg-gradient-to-r from-indigo-900 to-indigo-700 text-white py-16 text-center">
+        <div class="max-w-3xl mx-auto px-6">
+            <h2 class="text-4xl font-extrabold mb-4">Shop Direct From Independent Creators Worldwide</h2>
+            <p class="text-indigo-100 text-lg">Support small businesses, artisans, and global micro-vendors in one click.</p>
+        </div>
+    </header>
+
+    <!-- Product Grid -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        <h3 class="text-2xl font-bold mb-6 text-gray-900">Featured Products</h3>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <p class="text-gray-500 col-span-full">Loading marketplace products...</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
+        <p>&copy; 2026 GlobalMarket Platform. Empowering small vendors everywhere.</p>
+    </footer>
+
+    <!-- Script -->
+    <script>
+        async function loadProducts() {
+            try {
+                const res = await fetch('http://localhost:5000/api/products');
+                const products = await res.json();
+                const grid = document.getElementById('product-grid');
+
+                if (products.length === 0) {
+                    grid.innerHTML = `<p class="text-gray-500 col-span-full">No products found. Use the Vendor Dashboard to add some!</p>`;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                products.forEach(p => {
+                    grid.innerHTML += `
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                            <img src="${p.image_url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500'}" alt="${p.title}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded font-semibold">${p.store_name}</span>
+                                    <span class="text-xs text-gray-400">📍 ${p.country || 'Global'}</span>
+                                </div>
+                                <h4 class="font-bold text-lg mb-1 truncate">${p.title}</h4>
+                                <p class="text-gray-500 text-sm mb-4 line-clamp-2">${p.description || 'No description provided.'}</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xl font-bold text-gray-900">₱${Number(p.price).toFixed(2)}</span>
+                                    <button onclick="alert('Added to cart!')" class="bg-indigo-600 text-white text-sm px-3 py-2 rounded-lg hover:bg-indigo-700">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                document.getElementById('product-grid').innerHTML = `<p class="text-red-500 col-span-full">Cannot connect to backend server. Make sure Node.js is running.</p>`;
+            }
+        }
+        loadProducts();
+    </script>
+</body>
+</html>
