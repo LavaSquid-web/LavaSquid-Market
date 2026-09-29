@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS products (
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
     stock INT DEFAULT 0,
+    product_link VARCHAR(500),
     image_url VARCHAR(255),
     FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -102,5 +103,11 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
-
-INSERT INTO vendors (store_name, country) VALUES ('LavaSquid', 'Philippines');
+ALTER TABLE products CHANGE COLUMN stock product_link VARCHAR(255) NOT NULL;
+INSERT INTO vendors (store_name, country) VALUES ('Global Marketplace', 'Philippines');
+TRUNCATE TABLE products;
+ALTER TABLE products ADD COLUMN product_link VARCHAR(500);
+INSERT INTO users (name, email, password, role) VALUES 
+('Test Vendor', 'vendor@marketplace.com', 'password123', 'vendor'),
+('Test Buyer', 'buyer@marketplace.com', 'password123', 'buyer');
+ALTER TABLE users MODIFY COLUMN password VARCHAR(255);
